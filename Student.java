@@ -1,6 +1,9 @@
 
 package Student_Management_System;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Student {
 
     private int id;
@@ -13,7 +16,6 @@ public class Student {
     // Constructor
     public Student(int id, String name, String department,
                    int javaMarks, int sqlMarks, int webMarks) {
-
         this.id = id;
         this.name = name;
         this.department = department;
@@ -125,17 +127,123 @@ public class Student {
         System.out.println("------------------------------------");
     }
 
-    // Main method: starting point of the program
+    // Read and validate integer input
+    private static int readInt(Scanner scanner, String prompt,
+                               int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            try {
+                int value = Integer.parseInt(input);
+
+                if (value < min || value > max) {
+                    System.out.println(
+                        "Please enter a value between "
+                        + min + " and " + max + "."
+                    );
+                } else {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(
+                    "Invalid input. Please enter a whole number."
+                );
+            }
+        }
+    }
+
+    // Read and validate text input
+    private static String readText(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            if (!input.isEmpty()) {
+                return input;
+            }
+
+            System.out.println("This field cannot be empty.");
+        }
+    }
+
+    // Main method
     public static void main(String[] args) {
 
-        Student student = new Student(
-            102,
-            "Chandu","Computer Science and Engineering",
-            90,
-            95,
-            89
-        );
+        try (Scanner scanner = new Scanner(System.in)) {
 
-        student.displayStudent();
+            ArrayList<Student> students = new ArrayList<>();
+
+            System.out.println("====================================");
+            System.out.println("   STUDENT MANAGEMENT SYSTEM");
+            System.out.println("====================================");
+
+            int numberOfStudents = readInt(
+                scanner,
+                "Enter the number of students: ",
+                1,
+                1000
+            );
+
+            // Enter details for multiple students
+            for (int i = 1; i <= numberOfStudents; i++) {
+
+                System.out.println("\nEnter details for Student " + i);
+
+                int id = readInt(
+                    scanner, "Enter Student ID: ",
+                    1, Integer.MAX_VALUE
+                );
+
+                String name = readText(
+                    scanner, "Enter Student Name: "
+                );
+
+                String department = readText(
+                    scanner, "Enter Department: "
+                );
+
+                int javaMarks = readInt(
+                    scanner, "Enter Java Marks (0-100): ",
+                    0, 100
+                );
+
+                int sqlMarks = readInt(
+                    scanner, "Enter SQL Marks (0-100): ",
+                    0, 100
+                );
+
+                int webMarks = readInt(
+                    scanner, "Enter Web Marks (0-100): ",
+                    0, 100
+                );
+
+                Student student = new Student(
+                    id, name, department,
+                    javaMarks, sqlMarks, webMarks
+                );
+
+                students.add(student);
+
+                System.out.println(
+                    "Student details added successfully!"
+                );
+            }
+
+            // Display reports for all students
+            System.out.println("\n====================================");
+            System.out.println("       STUDENT RESULT REPORTS");
+            System.out.println("====================================");
+
+            for (Student student : students) {
+                student.displayStudent();
+            }
+
+            System.out.println(
+                "\nTotal students processed: " + students.size()
+            );
+
+            System.out.println("Program completed successfully.");
+        }
     }
 }
