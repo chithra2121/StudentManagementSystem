@@ -2,44 +2,47 @@
 
 ## About the Project
 
-The Student Management System is a Java-based application developed to manage student information and calculate academic performance.
+The Student Management System is a console-based Java application that allows users to enter and manage student information and calculate academic results.
 
-The project demonstrates core Java programming concepts such as classes, objects, constructors, encapsulation, methods, conditional statements, and basic exception handling.
+The application accepts details for multiple students, including student ID, name, department, and marks in Java, SQL, and Web Development. It automatically calculates total marks, percentage, grade, and pass/fail status for each student and displays an individual report.
 
-It stores student details such as student ID, name, department, and marks in three subjects. It calculates the total marks, percentage, grade, and pass/fail result, and displays the student's academic information.
+This project demonstrates core Java programming concepts, including object-oriented programming, collections, loops, user input, conditional statements, and input validation.
 
 ## Features
 
-- **Student Information:** Stores student ID, name, department, and subject marks.
-- **Object-Oriented Programming:** Uses a `Student` class, constructor, private fields, getters, and setters.
-- **Total Marks Calculation:** Calculates the combined marks in Java, SQL, and Web Development.
-- **Percentage Calculation:** Calculates the average percentage across the three subjects.
-- **Grade Calculation:** Assigns a grade based on the calculated percentage.
+- **Multiple Student Entry:** Enter details for multiple students in a single execution.
+- **Student Information:** Collects student ID, name, department, and subject marks.
+- **User Input:** Uses Java's `Scanner` class to accept information through the terminal.
+- **Input Validation:** Checks that marks are between 0 and 100, rejects empty text fields, and validates numeric input.
+- **Total Marks Calculation:** Calculates the total marks across three subjects.
+- **Percentage Calculation:** Calculates the average percentage.
+- **Grade Calculation:** Assigns a grade based on the percentage.
 - **Pass/Fail Evaluation:** Checks whether the student has scored at least 40 marks in each subject.
-- **Student Report:** Displays student details, subject marks, total, percentage, grade, and result.
-- **Custom Exception Class:** Includes an `InvalidMarksException` class in the project.
+- **Individual Student Reports:** Displays a separate academic report for every student.
+- **Student Collection:** Uses an `ArrayList` to store student objects during program execution.
 
 ## Technologies Used
 
 - Java
 - Object-Oriented Programming (OOP)
+- Java Collections Framework (`ArrayList`)
 - Visual Studio Code
-- Git and GitHub
+- Git
+- GitHub
 
-## Project Structure
+## Subjects
 
-```text
-StudentManagementSystem/
-├── Student.java
-├── InvalidMarksException.java
-└── README.md
-```
+The application currently accepts marks for the following subjects:
 
-The Java source files declare the `Student_Management_System` package. The compilation command below creates the required package directory for the compiled classes.
+- Java
+- SQL
+- Web Development
+
+Each subject is marked out of 100.
 
 ## Grading Criteria
 
-The application assigns grades based on the student's average percentage.
+Grades are assigned according to the calculated average percentage.
 
 | Percentage       | Grade |
 | ---------------- | ----- |
@@ -50,17 +53,30 @@ The application assigns grades based on the student's average percentage.
 | 50% to below 60% | D     |
 | Below 50%        | F     |
 
-A student passes only when they score at least 40 marks in each of the three subjects. Otherwise, the result is Fail.
+### Pass/Fail Rule
+
+A student passes only if they score at least 40 marks in all three subjects. If they score below 40 in any subject, their result is Fail.
+
+## Project Structure
+
+```text
+StudentManagementSystem/
+├── Student.java
+├── InvalidMarksException.java
+└── README.md
+```
+
+The Java source files use the `Student_Management_System` package. Compiled class files are generated in the appropriate package directory when the project is compiled.
 
 ## Prerequisites
 
-Before running the project, ensure that you have:
+Before running the application, install:
 
-- Java Development Kit (JDK) installed.
-- Visual Studio Code or another Java-compatible editor.
-- A terminal or command prompt.
+- Java Development Kit (JDK)
+- Visual Studio Code or another Java-compatible editor
+- Git (optional, for version control)
 
-Verify your Java installation using:
+Verify your Java installation:
 
 ```bash
 java -version
@@ -75,7 +91,7 @@ javac -version
 git clone https://github.com/chithra2121/StudentManagementSystem.git
 ```
 
-### 2. Open the Project Directory
+### 2. Navigate to the Project Folder
 
 ```bash
 cd StudentManagementSystem
@@ -93,7 +109,14 @@ javac -d . Student.java InvalidMarksException.java
 java Student_Management_System.Student
 ```
 
-The program displays a sample student's details, subject marks, total marks, percentage, grade, and pass/fail result.
+### 5. Enter Student Details
+
+- Enter the number of students.
+- Enter each student's ID, name, and department.
+- Enter the Java, SQL, and Web Development marks for each student.
+- Review the automatically generated reports.
+
+The program displays each student's details, total marks, percentage, grade, and result.
 
 ## Concepts Demonstrated
 
@@ -101,27 +124,30 @@ The program displays a sample student's details, subject marks, total marks, per
 - Constructors
 - Encapsulation
 - Getters and Setters
-- Instance Methods
-- Conditional Statements
-- Arithmetic Operations
-- Custom Exception Class
+- Methods
+- `Scanner` for user input
+- `ArrayList` for storing multiple objects
+- Loops and conditional statements
+- Input validation
+- Arithmetic calculations
+- Basic exception handling for invalid numeric input
 
 ## Future Enhancements
 
-The project can be extended with features such as:
+Possible improvements include:
 
-- Adding multiple student records
-- Searching for students by ID
-- Updating and deleting student records
-- Validating subject marks
-- Integrating custom exception handling into marks validation
-- Storing student information in a database
-- Developing a menu-driven interface
+- Search for students by ID
+- Update and delete student records
+- Prevent duplicate student IDs
+- Integrate the custom `InvalidMarksException` class into marks validation
+- Save student information permanently using file handling
+- Integrate a database such as MySQL
+- Add a menu-driven interface for managing student records
 
 ## Author
 
-**B R Chithra Shree**
+**Chithra Shree**
 
 ## License
 
-This project is available for learning and educational purposes.
+This project is intended for learning and educational purposes.
