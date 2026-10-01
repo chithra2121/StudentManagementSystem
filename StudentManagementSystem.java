@@ -4,13 +4,37 @@ package Student_Management_System;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Student_Management_System.InvalidMarksException;
+import Student_Management_System.Student;
+
 public class StudentManagementSystem {
 
-    private static final ArrayList<Student> students =
-            new ArrayList<>();
+    private static final ArrayList<Student> students = new ArrayList<>();
 
-    private static final Scanner scanner =
-            new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
+
+    private static void validateMarks(int marks)
+            throws InvalidMarksException {
+
+        if (marks < 0 || marks > 100) {
+            throw new InvalidMarksException(
+                    "Invalid marks! Enter marks between 0 and 100.");
+        }
+    }
+
+    private static int readMarks(String prompt) {
+
+        while (true) {
+            int marks = readInt(prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+            try {
+                validateMarks(marks);
+                return marks;
+            } catch (InvalidMarksException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -49,8 +73,7 @@ public class StudentManagementSystem {
                 case 6:
                     running = false;
                     System.out.println(
-                        "Thank you for using the Student Management System!"
-                    );
+                            "Thank you for using the Student Management System!");
                     break;
             }
         }
@@ -83,17 +106,15 @@ public class StudentManagementSystem {
 
                 if (value < min || value > max) {
                     System.out.println(
-                        "Enter a number between "
-                        + min + " and " + max + "."
-                    );
+                            "Enter a number between "
+                                    + min + " and " + max + ".");
                 } else {
                     return value;
                 }
 
             } catch (NumberFormatException e) {
                 System.out.println(
-                    "Invalid input. Please enter a whole number."
-                );
+                        "Invalid input. Please enter a whole number.");
             }
         }
     }
@@ -128,27 +149,24 @@ public class StudentManagementSystem {
         System.out.println("\n--- Add Student ---");
 
         int id = readInt(
-            "Enter Student ID: ", 1, Integer.MAX_VALUE
-        );
+                "Enter Student ID: ", 1, Integer.MAX_VALUE);
 
         if (findStudentById(id) != null) {
             System.out.println(
-                "A student with this ID already exists."
-            );
+                    "A student with this ID already exists.");
             return;
         }
 
         String name = readText("Enter Name: ");
         String department = readText("Enter Department: ");
 
-        int javaMarks = readInt("Enter Java Marks (0-100): ", 0, 100);
-        int sqlMarks = readInt("Enter SQL Marks (0-100): ", 0, 100);
-        int webMarks = readInt("Enter Web Marks (0-100): ", 0, 100);
+        int javaMarks = readMarks("Enter Java marks: ");
+        int sqlMarks = readMarks("Enter SQL marks: ");
+        int webMarks = readMarks("Enter Web marks: ");
 
         Student student = new Student(
-            id, name, department,
-            javaMarks, sqlMarks, webMarks
-        );
+                id, name, department,
+                javaMarks, sqlMarks, webMarks);
 
         students.add(student);
 
@@ -170,8 +188,7 @@ public class StudentManagementSystem {
         }
 
         System.out.println(
-            "Total students: " + students.size()
-        );
+                "Total students: " + students.size());
     }
 
     // Search student by ID
@@ -179,9 +196,8 @@ public class StudentManagementSystem {
         System.out.println("\n--- Search Student ---");
 
         int id = readInt(
-            "Enter Student ID to search: ",
-            1, Integer.MAX_VALUE
-        );
+                "Enter Student ID to search: ",
+                1, Integer.MAX_VALUE);
 
         Student student = findStudentById(id);
 
@@ -194,79 +210,76 @@ public class StudentManagementSystem {
     }
 
     // Update student information
+
     private static void updateStudent() {
-        System.out.println("\n--- Update Student ---");
 
         int id = readInt(
-            "Enter Student ID to update: ",
-            1, Integer.MAX_VALUE
-        );
+                "Enter Student ID to update: ",
+                1,
+                Integer.MAX_VALUE);
 
         Student student = findStudentById(id);
 
         if (student == null) {
-            System.out.println("Student not found.");
+            System.out.println("Student not found!");
             return;
         }
 
-        System.out.println("\nCurrent student details:");
-        student.displayStudent();
+        while (true) {
 
-        boolean updating = true;
-
-        while (updating) {
-            System.out.println("\nWhat would you like to update?");
-            System.out.println("1. Name");
-            System.out.println("2. Department");
-            System.out.println("3. Java Marks");
-            System.out.println("4. SQL Marks");
-            System.out.println("5. Web Marks");
+            System.out.println("\n===== UPDATE STUDENT =====");
+            System.out.println("1. Update Name");
+            System.out.println("2. Update Department");
+            System.out.println("3. Update Java Marks");
+            System.out.println("4. Update SQL Marks");
+            System.out.println("5. Update Web Marks");
             System.out.println("6. Finish Updating");
 
             int choice = readInt("Enter your choice: ", 1, 6);
 
             switch (choice) {
+
                 case 1:
-                    student.setName(readText("Enter new name: "));
-                    System.out.println("Name updated.");
+                    String name = readText("Enter new name: ");
+                    student.setName(name);
+                    System.out.println("Name updated successfully!");
                     break;
 
                 case 2:
-                    student.setDepartment(
-                        readText("Enter new department: ")
-                    );
-                    System.out.println("Department updated.");
+                    String department = readText("Enter new department: ");
+                    student.setDepartment(department);
+                    System.out.println(
+                            "Department updated successfully!");
                     break;
 
                 case 3:
-                    student.setJavaMarks(
-                        readInt("Enter new Java Marks: ", 0, 100)
-                    );
-                    System.out.println("Java marks updated.");
+                    int javaMarks = readMarks("Enter new Java marks: ");
+                    student.setJavaMarks(javaMarks);
+                    System.out.println(
+                            "Java marks updated successfully!");
                     break;
 
                 case 4:
-                    student.setSqlMarks(
-                        readInt("Enter new SQL Marks: ", 0, 100)
-                    );
-                    System.out.println("SQL marks updated.");
+                    int sqlMarks = readMarks("Enter new SQL marks: ");
+                    student.setSqlMarks(sqlMarks);
+                    System.out.println(
+                            "SQL marks updated successfully!");
                     break;
 
                 case 5:
-                    student.setWebMarks(
-                        readInt("Enter new Web Marks: ", 0, 100)
-                    );
-                    System.out.println("Web marks updated.");
+                    int webMarks = readMarks("Enter new Web marks: ");
+                    student.setWebMarks(webMarks);
+                    System.out.println(
+                            "Web marks updated successfully!");
                     break;
 
                 case 6:
-                    updating = false;
-                    break;
+                    System.out.println(
+                            "\nStudent details updated successfully!");
+                    student.displayStudent();
+                    return;
             }
         }
-
-        System.out.println("\nUpdated student report:");
-        student.displayStudent();
     }
 
     // Delete a student
@@ -274,9 +287,8 @@ public class StudentManagementSystem {
         System.out.println("\n--- Delete Student ---");
 
         int id = readInt(
-            "Enter Student ID to delete: ",
-            1, Integer.MAX_VALUE
-        );
+                "Enter Student ID to delete: ",
+                1, Integer.MAX_VALUE);
 
         Student student = findStudentById(id);
 
@@ -288,8 +300,7 @@ public class StudentManagementSystem {
         student.displayStudent();
 
         String confirmation = readText(
-            "Type YES to confirm deletion: "
-        );
+                "Type YES to confirm deletion: ");
 
         if (confirmation.equalsIgnoreCase("YES")) {
             students.remove(student);
