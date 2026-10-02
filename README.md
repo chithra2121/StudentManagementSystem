@@ -3,18 +3,18 @@
 ## About the Project
 
 The Student Management System is a Java console-based application
-that helps users manage student records efficiently.
+that allows users to manage student records efficiently.
 
-It allows users to add, view, search, update, and delete student
-records. It also calculates total marks, percentage, grade, and
-pass/fail results.
+The application supports student registration, searching, updating,
+deleting, marks validation, grade calculation, and persistent storage
+using file handling.
 
 ## Features
 
 ### Student Management
 
-- Add new student records
-- View all students
+- Add new students
+- View all student records
 - Search students by ID
 - Update student details
 - Delete student records
@@ -25,17 +25,29 @@ pass/fail results.
 - Store Java, SQL, and Web Technology marks
 - Calculate total marks and percentage
 - Calculate grades automatically
-- Determine pass/fail status
-- Validate marks within the range of 0 to 100
+- Determine pass/fail results
+- Validate marks between 0 and 100
 
-### Input Validation and Exception Handling
+### Exception Handling
 
+- Custom InvalidMarksException
 - Validate integer inputs
-- Prevent empty name and department fields
-- Handle invalid marks using a custom
-  `InvalidMarksException`
-- Display error messages for invalid marks
-- Allow users to re-enter valid marks
+- Reject empty names and departments
+- Handle invalid marks with meaningful messages
+
+### File Persistence
+
+- Save student records to students.txt
+- Load saved records when the application starts
+- Preserve records after the application closes
+- Save changes after adding, updating, or deleting students
+- Skip malformed, invalid, or duplicate records during loading
+
+### Automated Testing
+
+- Basic automated tests for total marks
+- Percentage calculation tests
+- Pass/fail result tests
 
 ## Technologies Used
 
@@ -44,6 +56,7 @@ pass/fail results.
 - ArrayList
 - Scanner
 - Exception Handling
+- Java File Handling
 - Git and GitHub
 
 ## Project Structure
@@ -53,7 +66,11 @@ StudentManagementSystem/
 |-- Student.java
 |-- StudentManagementSystem.java
 |-- InvalidMarksException.java
+|-- StudentTest.java
+|-- students.txt
 |-- README.md
+
+Note: students.txt is created when student records are saved.
 
 ## Requirements
 
@@ -61,7 +78,7 @@ StudentManagementSystem/
 - Visual Studio Code or another Java IDE
 - Git (optional, for version control)
 
-## How to Run the Project
+## How to Run
 
 ### 1. Open the Project Folder
 
@@ -69,48 +86,43 @@ Open the project folder in Visual Studio Code.
 
 ### 2. Compile the Java Files
 
-Run the following command in the terminal:
-
-javac -d . Student.java StudentManagementSystem.java InvalidMarksException.java
+javac -d . Student.java StudentManagementSystem.java InvalidMarksException.java StudentTest.java
 
 ### 3. Run the Application
 
 java Student_Management_System.StudentManagementSystem
 
+### 4. Run the Basic Tests
+
+java Student_Management_System.StudentTest
+
 ## How to Use
 
 1. Run the application.
-2. Select an option from the main menu.
-3. Add a student using a unique student ID.
-4. View all student records or search by ID.
-5. Update student details or marks when required.
-6. Delete a student record after confirmation.
-7. Select Exit to close the application.
+2. Choose an option from the main menu.
+3. Add a student with a unique ID.
+4. View all records or search by ID.
+5. Update student details or marks.
+6. Delete records after confirmation.
+7. Exit the application.
 
-## Validation Rules
-
-- Student IDs must be unique and positive.
-- Names and departments cannot be empty.
-- Marks must be between 0 and 100.
-- Invalid marks are rejected, and the user is
-  asked to enter valid marks.
+Student records are saved in students.txt and loaded
+automatically when the application starts.
 
 ## Current Limitations
 
-- Student records are stored in memory.
-- Records are lost when the application closes.
 - The application uses a console-based interface.
-- Database integration and automated unit tests
-  have not yet been implemented.
+- Records are stored in a local text file.
+- The basic test runner is not a JUnit test suite.
+- MySQL database integration is not yet implemented.
 
 ## Future Enhancements
 
-- Save student records to a file
-- Load saved records when the application starts
-- Add automated unit tests
 - Integrate MySQL using JDBC
+- Add JUnit automated testing
 - Implement login and access control
-- Develop a graphical or web-based interface
+- Develop a graphical user interface
+- Create a web-based interface
 
 ## Author
 
@@ -118,4 +130,4 @@ B R Chithra Shree
 
 ## License
 
-This project is intended for learning and educational purposes.
+This project is intended for educational and learning purposes.
