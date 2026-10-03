@@ -1,133 +1,227 @@
 # Student Management System
 
-## About the Project
-
-The Student Management System is a Java console-based application
-that allows users to manage student records efficiently.
-
-The application supports student registration, searching, updating,
-deleting, marks validation, grade calculation, and persistent storage
-using file handling.
+A console-based Student Management System developed using Java and MySQL. This application helps manage student records, maintain academic details, and calculate student results. JDBC (Java Database Connectivity) is used to connect the Java application to the MySQL database.
 
 ## Features
 
-### Student Management
-
-- Add new students
-- View all student records
-- Search students by ID
-- Update student details
-- Delete student records
-- Prevent duplicate student IDs
-
-### Marks and Results
-
-- Store Java, SQL, and Web Technology marks
-- Calculate total marks and percentage
-- Calculate grades automatically
-- Determine pass/fail results
-- Validate marks between 0 and 100
-
-### Exception Handling
-
-- Custom InvalidMarksException
-- Validate integer inputs
-- Reject empty names and departments
-- Handle invalid marks with meaningful messages
-
-### File Persistence
-
-- Save student records to students.txt
-- Load saved records when the application starts
-- Preserve records after the application closes
-- Save changes after adding, updating, or deleting students
-- Skip malformed, invalid, or duplicate records during loading
-
-### Automated Testing
-
-- Basic automated tests for total marks
-- Percentage calculation tests
-- Pass/fail result tests
+- **Add Student:** Add new student records with ID, name, department, and subject marks.
+- **View All Students:** Display all student records stored in the database.
+- **Search Student:** Search for a student using their unique ID.
+- **Update Student:** Update student details, including name, department, and subject marks.
+- **Delete Student:** Delete a student record from the database after confirmation.
+- **Calculate Total Marks:** Calculate the total marks obtained in Java, SQL, and Web Development.
+- **Calculate Percentage:** Calculate the student's overall percentage.
+- **Calculate Grade:** Assign a grade based on the percentage.
+- **Pass/Fail Result:** Determine whether a student passes or fails based on subject marks.
+- **Input Validation:** Validate marks and handle invalid marks using a custom exception.
+- **MySQL Database Integration:** Store and retrieve student information using JDBC.
+- **Data Migration:** Import existing student records from a text file into MySQL.
 
 ## Technologies Used
 
-- Java
-- Object-Oriented Programming (OOP)
-- ArrayList
-- Scanner
-- Exception Handling
-- Java File Handling
-- Git and GitHub
+- **Programming Language:** Java
+- **Database:** MySQL 8.0
+- **Database Connectivity:** JDBC
+- **JDBC Driver:** MySQL Connector/J 9.3.0
+- **IDE:** Visual Studio Code
+- **Terminal:** Windows PowerShell
 
 ## Project Structure
 
+```text
 StudentManagementSystem/
-|
-|-- Student.java
-|-- StudentManagementSystem.java
-|-- InvalidMarksException.java
-|-- StudentTest.java
-|-- students.txt
-|-- README.md
+│
+├── Student.java
+├── StudentManagementSystem.java
+├── InvalidMarksException.java
+├── StudentTest.java
+├── DBConnectionTest.java
+├── StudentDataMigration.java
+├── students.txt
+├── students_backup.txt
+├── README.md
+│
+├── lib/
+│   └── mysql-connector-j-9.3.0.jar
+│
+└── backup/
+    ├── Student.java
+    └── StudentManagementSystem.java
+```
 
-Note: students.txt is created when student records are saved.
+## Database Configuration
 
-## Requirements
+### 1. Install MySQL
 
-- Java Development Kit (JDK)
-- Visual Studio Code or another Java IDE
-- Git (optional, for version control)
+Install MySQL Server and make sure the MySQL service is running.
 
-## How to Run
+### 2. Create the Database
 
-### 1. Open the Project Folder
+Open MySQL and execute:
 
-Open the project folder in Visual Studio Code.
+```sql
+CREATE DATABASE IF NOT EXISTS student_management;
 
-### 2. Compile the Java Files
+USE student_management;
+```
 
-javac -d . Student.java StudentManagementSystem.java InvalidMarksException.java StudentTest.java
+### 3. Create the Students Table
 
-### 3. Run the Application
+```sql
+CREATE TABLE IF NOT EXISTS students (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    java_marks INT NOT NULL,
+    sql_marks INT NOT NULL,
+    web_marks INT NOT NULL
+);
+```
 
-java Student_Management_System.StudentManagementSystem
+### 4. Verify the Database
 
-### 4. Run the Basic Tests
+To display all student records:
 
-java Student_Management_System.StudentTest
+```sql
+SELECT * FROM students;
+```
 
-## How to Use
+To count the records:
 
-1. Run the application.
-2. Choose an option from the main menu.
-3. Add a student with a unique ID.
-4. View all records or search by ID.
-5. Update student details or marks.
-6. Delete records after confirmation.
-7. Exit the application.
+```sql
+SELECT COUNT(*) FROM students;
+```
 
-Student records are saved in students.txt and loaded
-automatically when the application starts.
+## Prerequisites
 
-## Current Limitations
+Before running the project, make sure you have:
 
-- The application uses a console-based interface.
-- Records are stored in a local text file.
-- The basic test runner is not a JUnit test suite.
-- MySQL database integration is not yet implemented.
+1. Java Development Kit (JDK) installed.
+2. MySQL Server installed and running.
+3. Visual Studio Code or another Java-compatible IDE.
+4. MySQL Connector/J downloaded and placed in the `lib` folder.
+5. The `student_management` database and `students` table created.
 
-## Future Enhancements
+## How to Compile and Run
 
-- Integrate MySQL using JDBC
-- Add JUnit automated testing
-- Implement login and access control
-- Develop a graphical user interface
-- Create a web-based interface
+Run the following commands from the project root directory in Windows PowerShell.
+
+### Step 1: Open the Project Directory
+
+```powershell
+cd "C:\Users\CHANDANA B R\OneDrive\Desktop\StudentManagementSystem"
+```
+
+### Step 2: Compile the Application
+
+```powershell
+javac -cp ".;lib\mysql-connector-j-9.3.0.jar" -d . StudentManagementSystem.java Student.java InvalidMarksException.java
+```
+
+### Step 3: Run the Application
+
+```powershell
+java -cp ".;lib\mysql-connector-j-9.3.0.jar" Student_Management_System.StudentManagementSystem
+```
+
+### Step 4: Connect to MySQL
+
+When prompted, enter your MySQL root password. The application will attempt to connect to the `student_management` database.
+
+After a successful connection, the Student Management System menu will appear.
+
+## Application Menu
+
+The application provides the following menu options:
+
+```text
+===== STUDENT MANAGEMENT SYSTEM =====
+1. Add Student
+2. View All Students
+3. Search Student by ID
+4. Update Student
+5. Delete Student
+0. Exit
+```
+
+Choose an option by entering the corresponding number.
+
+## Database Connection Test
+
+The `DBConnectionTest.java` file can be used to check whether the application can connect to MySQL.
+
+Compile the test:
+
+```powershell
+javac -cp ".;lib\mysql-connector-j-9.3.0.jar" -d . DBConnectionTest.java
+```
+
+Run the test:
+
+```powershell
+java -cp ".;lib\mysql-connector-j-9.3.0.jar" Student_Management_System.DBConnectionTest
+```
+
+Enter your MySQL root password when prompted.
+
+## Student Data Migration
+
+The `StudentDataMigration.java` utility imports existing student records from `students.txt` into the MySQL database.
+
+The expected text-file format is:
+
+```text
+id|name|department|javaMarks|sqlMarks|webMarks
+```
+
+Each record should contain six fields separated by the `|` character.
+
+**Important:** Run the migration utility only when you intend to import records. If student IDs already exist in MySQL, duplicate primary-key IDs may be skipped.
+
+## Validation and Exception Handling
+
+- Student IDs must be unique and positive.
+- Student names and departments cannot be empty.
+- Marks must be between 0 and 100.
+- Invalid marks are handled using `InvalidMarksException`.
+- Database operations use JDBC prepared statements to pass input values to SQL queries.
+
+## Academic Result Calculation
+
+The application calculates:
+
+- **Total Marks:** Sum of Java, SQL, and Web Development marks.
+- **Percentage:** Total marks divided by three.
+- **Grade:** Assigned according to the percentage ranges implemented in `Student.java`.
+- **Result:** A student passes only if each subject mark is at least 40.
+
+## Backup and Data Safety
+
+- `students_backup.txt` can be retained as a backup of the original text-file data.
+- The `backup` directory can contain copies of earlier Java source files.
+- Student records are stored in the MySQL database when using the JDBC-integrated application.
+- Keep a separate backup of important database records.
+
+## Security Notes
+
+- Do not hard-code your MySQL password into source code.
+- Do not commit passwords or other sensitive information to GitHub.
+- Use appropriate MySQL account permissions when deploying the application.
+- Keep the JDBC driver available locally when compiling and running the application.
+
+## Future Improvements
+
+- Add a graphical user interface using Java Swing or JavaFX.
+- Add login authentication and role-based access.
+- Generate student reports.
+- Export records to CSV or PDF.
+- Improve database transaction handling and logging.
+- Add automated unit and integration tests.
 
 ## Author
 
-B R Chithra Shree
+** B R Chithra Shree**
 
 ## License
 
-This project is intended for educational and learning purposes.
+This project is intended for educational and learning purposes. Add a specific open-source license if you decide to distribute it under one.

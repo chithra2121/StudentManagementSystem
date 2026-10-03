@@ -1,99 +1,86 @@
 
 package Student_Management_System;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
-
-import Student_Management_System.InvalidMarksException;
-import Student_Management_System.Student;
 
 public class StudentManagementSystem {
 
-    private static final ArrayList<Student> students = new ArrayList<>();
-
     private static final Scanner scanner = new Scanner(System.in);
+    private static Connection connection;
 
-    private static void validateMarks(int marks)
-            throws InvalidMarksException {
-
-        if (marks < 0 || marks > 100) {
-            throw new InvalidMarksException(
-                    "Invalid marks! Enter marks between 0 and 100.");
-        }
-    }
-
-    private static int readMarks(String prompt) {
-
-        while (true) {
-            int marks = readInt(prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
-
-            try {
-                validateMarks(marks);
-                return marks;
-            } catch (InvalidMarksException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
+    private static final String URL =
+            "jdbc:mysql://localhost:3306/student_management";
+    private static final String USER = "root";
 
     public static void main(String[] args) {
 
-        boolean running = true;
+        System.out.print("Enter MySQL root password: ");
+        String password = scanner.nextLine();
 
-        System.out.println("====================================");
-        System.out.println("     STUDENT MANAGEMENT SYSTEM");
-        System.out.println("====================================");
+        try {
+            connection = DriverManager.getConnection(
+                    URL, USER, password);
 
-        while (running) {
-            displayMenu();
+            System.out.println("Connected to MySQL successfully!");
 
-            int choice = readInt("Enter your choice: ", 1, 6);
+            while (true) {
+                System.out.println(
+                        "\n===== STUDENT MANAGEMENT SYSTEM =====");
+                System.out.println("1. Add Student");
+                System.out.println("2. View All Students");
+                System.out.println("3. Search Student by ID");
+                System.out.println("4. Update Student");
+                System.out.println("5. Delete Student");
+                System.out.println("6. Exit");
 
-            switch (choice) {
-                case 1:
-                    addStudent();
-                    break;
+                int choice = readInt("Enter your choice: ", 1, 6);
 
-                case 2:
-                    viewAllStudents();
-                    break;
-
-                case 3:
-                    searchStudent();
-                    break;
-
-                case 4:
-                    updateStudent();
-                    break;
-
-                case 5:
-                    deleteStudent();
-                    break;
-
-                case 6:
-                    running = false;
-                    System.out.println(
-                            "Thank you for using the Student Management System!");
-                    break;
+                switch (choice) {
+                    case 1:
+                        addStudent();
+                        break;
+                    case 2:
+                        viewAllStudents();
+                        break;
+                    case 3:
+                        searchStudent();
+                        break;
+                    case 4:
+                        updateStudent();
+                        break;
+                    case 5:
+                        deleteStudent();
+                        break;
+                    case 6:
+                        System.out.println(
+                                "Thank you for using the application!");
+                        return;
+                }
             }
+
+        } catch (SQLException e) {
+            System.out.println("Database connection failed: "
+                    + e.getMessage());
+        } finally {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(
+                        "Error closing database connection.");
+            }
+            scanner.close();
         }
-
-        scanner.close();
     }
 
-    // Display menu
-    private static void displayMenu() {
-        System.out.println("\n========== MAIN MENU ==========");
-        System.out.println("1. Add Student");
-        System.out.println("2. View All Students");
-        System.out.println("3. Search Student by ID");
-        System.out.println("4. Update Student");
-        System.out.println("5. Delete Student");
-        System.out.println("6. Exit");
-        System.out.println("===============================");
-    }
+    // ================= INPUT VALIDATION =================
 
-    // Read a valid integer within a specified range
     private static int readInt(
             String prompt, int min, int max) {
 
@@ -106,207 +93,343 @@ public class StudentManagementSystem {
 
                 if (value < min || value > max) {
                     System.out.println(
-                            "Enter a number between "
+                            "Please enter a value between "
                                     + min + " and " + max + ".");
-                } else {
-                    return value;
+                    continue;
                 }
+
+                return value;
 
             } catch (NumberFormatException e) {
                 System.out.println(
-                        "Invalid input. Please enter a whole number.");
+                        "Invalid input! Enter a whole number.");
             }
         }
     }
 
-    // Read non-empty text
     private static String readText(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine().trim();
 
-            if (!input.isEmpty()) {
+            if (!input.isEmpty() && !input.contains("|")) {
                 return input;
             }
 
-            System.out.println("This field cannot be empty.");
+            System.out.println(
+                    "Input cannot be empty or contain the | character.");
         }
     }
 
-    // Find student by ID
-    private static Student findStudentById(int id) {
-        for (Student student : students) {
-            if (student.getId() == id) {
-                return student;
+    private static int readMarks(String prompt) {
+        return readInt(prompt, 0, 100);
+    }
+
+    // ================= FIND STUDENT =================
+
+    private static Student findStudentById(int id)
+            throws SQLException {
+
+        String sql = "SELECT * FROM students WHERE id = ?";
+
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("department"),
+                            rs.getInt("java_marks"),
+                            rs.getInt("sql_marks"),
+                            rs.getInt("web_marks"));
+                }
             }
         }
 
         return null;
     }
 
-    // Add a new student
+    // ================= ADD STUDENT =================
+
     private static void addStudent() {
-        System.out.println("\n--- Add Student ---");
+
+        System.out.println("\n===== ADD STUDENT =====");
 
         int id = readInt(
                 "Enter Student ID: ", 1, Integer.MAX_VALUE);
 
-        if (findStudentById(id) != null) {
-            System.out.println(
-                    "A student with this ID already exists.");
-            return;
-        }
-
-        String name = readText("Enter Name: ");
+        String name = readText("Enter Student Name: ");
         String department = readText("Enter Department: ");
+        int javaMarks = readMarks("Enter Java Marks: ");
+        int sqlMarks = readMarks("Enter SQL Marks: ");
+        int webMarks = readMarks("Enter Web Marks: ");
 
-        int javaMarks = readMarks("Enter Java marks: ");
-        int sqlMarks = readMarks("Enter SQL marks: ");
-        int webMarks = readMarks("Enter Web marks: ");
+        String sql = "INSERT INTO students "
+                + "(id, name, department, java_marks, "
+                + "sql_marks, web_marks) VALUES (?, ?, ?, ?, ?, ?)";
 
-        Student student = new Student(
-                id, name, department,
-                javaMarks, sqlMarks, webMarks);
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
-        students.add(student);
+            statement.setInt(1, id);
+            statement.setString(2, name);
+            statement.setString(3, department);
+            statement.setInt(4, javaMarks);
+            statement.setInt(5, sqlMarks);
+            statement.setInt(6, webMarks);
 
-        System.out.println("Student added successfully!");
-        student.displayStudent();
-    }
+            statement.executeUpdate();
 
-    // Display all students
-    private static void viewAllStudents() {
-        System.out.println("\n--- All Student Reports ---");
+            System.out.println("Student added successfully!");
 
-        if (students.isEmpty()) {
-            System.out.println("No student records found.");
-            return;
-        }
+            new Student(id, name, department,
+                    javaMarks, sqlMarks, webMarks).displayStudent();
 
-        for (Student student : students) {
-            student.displayStudent();
-        }
-
-        System.out.println(
-                "Total students: " + students.size());
-    }
-
-    // Search student by ID
-    private static void searchStudent() {
-        System.out.println("\n--- Search Student ---");
-
-        int id = readInt(
-                "Enter Student ID to search: ",
-                1, Integer.MAX_VALUE);
-
-        Student student = findStudentById(id);
-
-        if (student == null) {
-            System.out.println("Student not found.");
-        } else {
-            System.out.println("Student found!");
-            student.displayStudent();
-        }
-    }
-
-    // Update student information
-
-    private static void updateStudent() {
-
-        int id = readInt(
-                "Enter Student ID to update: ",
-                1,
-                Integer.MAX_VALUE);
-
-        Student student = findStudentById(id);
-
-        if (student == null) {
-            System.out.println("Student not found!");
-            return;
-        }
-
-        while (true) {
-
-            System.out.println("\n===== UPDATE STUDENT =====");
-            System.out.println("1. Update Name");
-            System.out.println("2. Update Department");
-            System.out.println("3. Update Java Marks");
-            System.out.println("4. Update SQL Marks");
-            System.out.println("5. Update Web Marks");
-            System.out.println("6. Finish Updating");
-
-            int choice = readInt("Enter your choice: ", 1, 6);
-
-            switch (choice) {
-
-                case 1:
-                    String name = readText("Enter new name: ");
-                    student.setName(name);
-                    System.out.println("Name updated successfully!");
-                    break;
-
-                case 2:
-                    String department = readText("Enter new department: ");
-                    student.setDepartment(department);
-                    System.out.println(
-                            "Department updated successfully!");
-                    break;
-
-                case 3:
-                    int javaMarks = readMarks("Enter new Java marks: ");
-                    student.setJavaMarks(javaMarks);
-                    System.out.println(
-                            "Java marks updated successfully!");
-                    break;
-
-                case 4:
-                    int sqlMarks = readMarks("Enter new SQL marks: ");
-                    student.setSqlMarks(sqlMarks);
-                    System.out.println(
-                            "SQL marks updated successfully!");
-                    break;
-
-                case 5:
-                    int webMarks = readMarks("Enter new Web marks: ");
-                    student.setWebMarks(webMarks);
-                    System.out.println(
-                            "Web marks updated successfully!");
-                    break;
-
-                case 6:
-                    System.out.println(
-                            "\nStudent details updated successfully!");
-                    student.displayStudent();
-                    return;
+        } catch (SQLException e) {
+            if ("23000".equals(e.getSQLState())) {
+                System.out.println(
+                        "A student with this ID already exists.");
+            } else {
+                System.out.println(
+                        "Error adding student: " + e.getMessage());
             }
         }
     }
 
-    // Delete a student
+    // ================= VIEW ALL STUDENTS =================
+
+    private static void viewAllStudents() {
+
+        System.out.println("\n===== ALL STUDENTS =====");
+
+        String sql = "SELECT * FROM students ORDER BY id";
+
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+
+            boolean found = false;
+
+            while (rs.next()) {
+                found = true;
+
+                Student student = new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("department"),
+                        rs.getInt("java_marks"),
+                        rs.getInt("sql_marks"),
+                        rs.getInt("web_marks"));
+
+                student.displayStudent();
+            }
+
+            if (!found) {
+                System.out.println("No student records found.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Error viewing students: " + e.getMessage());
+        }
+    }
+
+    // ================= SEARCH STUDENT =================
+
+    private static void searchStudent() {
+
+        System.out.println("\n===== SEARCH STUDENT =====");
+
+        int id = readInt(
+                "Enter Student ID: ", 1, Integer.MAX_VALUE);
+
+        try {
+            Student student = findStudentById(id);
+
+            if (student == null) {
+                System.out.println("Student not found!");
+            } else {
+                student.displayStudent();
+            }
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Error searching student: " + e.getMessage());
+        }
+    }
+
+    // ================= UPDATE STUDENT =================
+
+    private static void updateStudent() {
+
+        System.out.println("\n===== UPDATE STUDENT =====");
+
+        int id = readInt(
+                "Enter Student ID to update: ",
+                1, Integer.MAX_VALUE);
+
+        try {
+            Student student = findStudentById(id);
+
+            if (student == null) {
+                System.out.println("Student not found!");
+                return;
+            }
+
+            while (true) {
+                System.out.println("\n===== UPDATE MENU =====");
+                System.out.println("1. Update Name");
+                System.out.println("2. Update Department");
+                System.out.println("3. Update Java Marks");
+                System.out.println("4. Update SQL Marks");
+                System.out.println("5. Update Web Marks");
+                System.out.println("6. Finish Updating");
+
+                int choice = readInt(
+                        "Enter your choice: ", 1, 6);
+
+                switch (choice) {
+                    case 1: {
+                        String value =
+                                readText("Enter new name: ");
+                        if (updateField("name", value, id)) {
+                            student.setName(value);
+                            System.out.println(
+                                    "Name updated successfully!");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        String value =
+                                readText("Enter new department: ");
+                        if (updateField("department", value, id)) {
+                            student.setDepartment(value);
+                            System.out.println(
+                                    "Department updated successfully!");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        int value =
+                                readMarks("Enter new Java marks: ");
+                        if (updateField("java_marks", value, id)) {
+                            student.setJavaMarks(value);
+                            System.out.println(
+                                    "Java marks updated successfully!");
+                        }
+                        break;
+                    }
+                    case 4: {
+                        int value =
+                                readMarks("Enter new SQL marks: ");
+                        if (updateField("sql_marks", value, id)) {
+                            student.setSqlMarks(value);
+                            System.out.println(
+                                    "SQL marks updated successfully!");
+                        }
+                        break;
+                    }
+                    case 5: {
+                        int value =
+                                readMarks("Enter new Web marks: ");
+                        if (updateField("web_marks", value, id)) {
+                            student.setWebMarks(value);
+                            System.out.println(
+                                    "Web marks updated successfully!");
+                        }
+                        break;
+                    }
+                    case 6:
+                        student.displayStudent();
+                        return;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Error updating student: " + e.getMessage());
+        }
+    }
+
+    // Only fixed column names from the update menu are passed here.
+    private static boolean updateField(
+            String column, Object value, int id) {
+
+        String sql = "UPDATE students SET "
+                + column + " = ? WHERE id = ?";
+
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setObject(1, value);
+            statement.setInt(2, id);
+
+            if (statement.executeUpdate() > 0) {
+                return true;
+            }
+
+            System.out.println("No student record was updated.");
+            return false;
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Database update failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ================= DELETE STUDENT =================
+
     private static void deleteStudent() {
-        System.out.println("\n--- Delete Student ---");
+
+        System.out.println("\n===== DELETE STUDENT =====");
 
         int id = readInt(
                 "Enter Student ID to delete: ",
                 1, Integer.MAX_VALUE);
 
-        Student student = findStudentById(id);
+        try {
+            Student student = findStudentById(id);
 
-        if (student == null) {
-            System.out.println("Student not found.");
-            return;
-        }
+            if (student == null) {
+                System.out.println("Student not found!");
+                return;
+            }
 
-        student.displayStudent();
+            student.displayStudent();
 
-        String confirmation = readText(
-                "Type YES to confirm deletion: ");
+            System.out.print(
+                    "Are you sure you want to delete this student? (YES/NO): ");
 
-        if (confirmation.equalsIgnoreCase("YES")) {
-            students.remove(student);
-            System.out.println("Student deleted successfully!");
-        } else {
-            System.out.println("Deletion cancelled.");
+            String confirmation = scanner.nextLine().trim();
+
+            if (!confirmation.equalsIgnoreCase("YES")) {
+                System.out.println("Deletion cancelled.");
+                return;
+            }
+
+            String sql = "DELETE FROM students WHERE id = ?";
+
+            try (PreparedStatement statement =
+                         connection.prepareStatement(sql)) {
+
+                statement.setInt(1, id);
+
+                if (statement.executeUpdate() > 0) {
+                    System.out.println(
+                            "Student deleted successfully!");
+                } else {
+                    System.out.println("Student not found!");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(
+                    "Error deleting student: " + e.getMessage());
         }
     }
 }
