@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentHub | Student Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">S</div>
+            <span>StudentHub</span>
+        </div>
+
+        <p class="menu-label">MAIN MENU</p>
+        <a class="nav-link active" href="#dashboard">▦ &nbsp; Dashboard</a>
+        <a class="nav-link" href="#students">♙ &nbsp; Students</a>
+        <a class="nav-link" href="#add-student">＋ &nbsp; Add Student</a>
+
+        <div class="sidebar-bottom">
+            <div class="profile-avatar">CS</div>
+            <div>
+                <strong>Administrator</strong>
+                <small>Student Manager</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">OVERVIEW</p>
+                <h1>Dashboard</h1>
+                <p class="subtitle">Welcome back! Here's what's happening with your students.</p>
+            </div>
+            <div class="today-badge">✦ &nbsp; Student Management</div>
+        </header>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-icon purple">♙</div>
+                <p>Total Students</p>
+                <h2 id="total-students">0</h2>
+                <span class="stat-note">Students in this preview</span>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon pink">▤</div>
+                <p>Average Marks</p>
+                <h2 id="average-marks">0%</h2>
+                <span class="stat-note">Across all three subjects</span>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon lavender">✓</div>
+                <p>Subjects</p>
+                <h2>03</h2>
+                <span class="stat-note">Java, SQL and Web</span>
+            </article>
+        </section>
+
+        <section class="panel" id="students">
+            <div class="panel-header">
+                <div>
+                    <h2>Student Directory</h2>
+                    <p>View and search student records.</p>
+                </div>
+                <button class="primary-button" id="show-form-button">
+                    + Add Student
+                </button>
+            </div>
+
+            <div class="search-box">
+                <span>⌕</span>
+                <input id="search-input" type="search"
+                    placeholder="Search by name, ID or department...">
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STUDENT</th>
+                            <th>ID</th>
+                            <th>DEPARTMENT</th>
+                            <th>JAVA</th>
+                            <th>SQL</th>
+                            <th>WEB</th>
+                            <th>AVERAGE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body"></tbody>
+                </table>
+            </div>
+
+            <p class="table-footer" id="table-footer"></p>
+        </section>
+
+        <section class="panel form-panel" id="add-student">
+            <div class="panel-header">
+                <div>
+                    <h2>Add a Student</h2>
+                    <p>Enter student details to preview the form.</p>
+                </div>
+            </div>
+
+            <form id="student-form">
+                <div class="form-grid">
+                    <label>
+                        Student ID
+                        <input type="number" id="student-id" min="1" required>
+                    </label>
+                    <label>
+                        Full Name
+                        <input type="text" id="student-name"
+                            placeholder="Enter full name" required>
+                    </label>
+                    <label>
+                        Department
+                        <input type="text" id="student-department"
+                            placeholder="e.g. Computer Science" required>
+                    </label>
+                    <label>
+                        Java Marks
+                        <input type="number" id="java-marks"
+                            min="0" max="100" required>
+                    </label>
+                    <label>
+                        SQL Marks
+                        <input type="number" id="sql-marks"
+                            min="0" max="100" required>
+                    </label>
+                    <label>
+                        Web Marks
+                        <input type="number" id="web-marks"
+                            min="0" max="100" required>
+                    </label>
+                </div>
+                <button type="submit" class="primary-button">Add Student</button>
+                <p id="form-message" role="status"></p>
+            </form>
+        </section>
+
+        <footer>StudentHub · Phase 5 Frontend Preview</footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
