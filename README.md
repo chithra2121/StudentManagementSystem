@@ -220,7 +220,7 @@ The application calculates:
 
 ## Author
 
-B R Chithra Shree
+ *B R Chithra Shree*
 
 ## License
 
